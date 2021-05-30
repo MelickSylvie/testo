@@ -1,0 +1,17 @@
+#BlueJ class context
+comment0.target=Vol
+comment1.params=numeroDeVol\ destination\ dateDepart\ nbReservation
+comment1.target=Vol(java.lang.String,\ java.lang.String,\ Date,\ int)
+comment2.params=
+comment2.target=java.lang.String\ getNumeroDeVol()
+comment3.params=
+comment3.target=java.lang.String\ getDestination()
+comment4.params=
+comment4.target=Date\ getDateDepart()
+comment5.params=value
+comment5.target=void\ setDateDepart(Date)
+comment6.params=
+comment6.target=int\ NbReservation()
+comment7.params=value
+comment7.target=void\ setNbReservation(int)
+numComments=8
