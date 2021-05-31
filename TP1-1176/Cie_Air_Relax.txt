@@ -1,8 +1,8 @@
-14567;Toronto;12;07;2021;167
-17890;Guadeloupe;28;02;2022;340
-19012;Nouvelle-Orléans;03;07;2021;250
-22345;Martinique;25;06;2021;337
+14567;Toronto;12;7;2021;167
+17890;Guadeloupe;28;2;2022;340
+19012;Nouvelle-Orléans;3;7;2021;250
+22345;Martinique;25;6;2021;337
 28901;Las Vegas;13;12;2021;0
-36789;New-York;15;01;2022;67
-45678;Les Iles Baléares;06;05;2022;150
-53456;San Francisco;13;08;2021;327
+36789;New-York;15;1;2022;67
+45678;Les Iles Baléares;6;5;2022;150
+53456;San Francisco;13;8;2021;327
