@@ -1,59 +1,41 @@
 import java.util.*;
 import java.time.*;
 
-public class Vol
-{
+public class Vol {
     private String numeroDeVol;
     private String destination;
-    private LocalDateTime dateDepart = LocalDateTime.MIN;
-    private int nbReservation;
-    
-    private static int nbVols = 0;
+    private Date DateDepart;
+    private int NbReservation;
 
-    public Vol(String numeroDeVol, String destination, Date dateDepart, int nbReservation)
-    {
-        nbVols++;
-        NumeroDeVol = numeroDeVol;
-        Destination = destination;
-        DateDepart = dateDepart;
-        NbReservation = nbReservation;
+    public Vol(String numeroDeVol, String destination, Date dateDepart, int nbReservation) {
+        this.numeroDeVol = numeroDeVol;
+        this.destination = destination;
+        this.DateDepart = dateDepart;
+        this.NbReservation = nbReservation;
     }
 
-    private String NumeroDeVol;
-    public String getNumeroDeVol()
-    {
-    return numeroDeVol;
+    public String getNumeroDeVol() {
+        return numeroDeVol;
     }
-    
-    private String Destination;
-    public String getDestination()
-    {
+
+    public String getDestination() {
         return destination;
     }
-    
-    private Date DateDepart;
-    public Date getDateDepart()
-    {
+
+    public Date getDateDepart() {
         return DateDepart;
     }
-      public void setDateDepart(Date value)
-    {
-    DateDepart = value;
-    }
-    
-    private int NbReservation ;
-    public int getNbReservation()
-    {
+    public int getNbReservation() {
         return NbReservation;
     }
-    public final void setNbReservation(int value)
-    {
+
+    public void setDateDepart(Date value) {
+        DateDepart = value;
+    }
+
+
+    public final void setNbReservation(int value) {
         NbReservation = value;
     }
-    
-    
-    
+
 }
-
-
-

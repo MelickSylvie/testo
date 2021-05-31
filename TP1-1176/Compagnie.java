@@ -10,86 +10,100 @@ import java.util.*;
 import java.io.*;
 import javax.swing.*;
 import java.text.*;
-import java.awt.Font;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Arrays;
 import java.util.List;
 
 public class Compagnie {
 
-    private static String nomDuFichier = "Cie_Air_Relax.txt";
-    private static ArrayList<Vol> tabVols = new ArrayList<Vol>();
-    public static boolean tabModifie = false;
-    public static int nbVols = 0;
+    private static ArrayList<Vol> tabVols;
+    private int nbVols;
+    private int maxVol;
     public static final int MAX_PLACES = 340;
-
-    public static void chargerVol() throws IOException {
-        BufferedReader tLire = new BufferedReader(new FileReader("./Cie_Air_Relax.txt"));
+    private String name;
+    private JFrame dialog; //frame pour les  dialog
+    private JFrame frame; // frame principale pour les informations
+    private JButton mainMenu;
+    public Compagnie(String name, int  maxVol) {
+        // initialisation des attributs par paramtres
+        this.name = name;
+        this.maxVol = maxVol;
+        // initialisation des attribut non parametrable
+        nbVols = 0;
+        tabVols = new ArrayList<Vol>();
+        nbVols=0;
+        dialog = new JFrame("Option de gestion pour"+name);
+        frame = new JFrame(name);
+        frame.setLayout(new GridLayout(2,1));
+        dialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        mainMenu = new JButton("main menu");
+        mainMenu.setBounds(150, 150, 20, 10);
+        mainMenu.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ouvrir();
+            }
+        } );
+    }
+    public  String ouvrir() {
+        return JOptionPane.showInputDialog(dialog,
+        "1. Listes des vols \n" +
+        "2. Ajout d'un vol  \n" +
+        "3. Retrait d'un vol\n" +
+        "4. Modif. date depart\n" +
+        "5. Reserver un vol \n"+
+        "0. Terminer");    
+    }
+    public void chargerVol() throws IOException {
+        BufferedReader tLire = new BufferedReader(new FileReader("Cie_Air_relax.txt"));
         String tab[];
         String ligne;
         while ((ligne = tLire.readLine()) != null) {
-            tab = ligne.split(":");
+            tab = ligne.split(";");
             Date date = new Date(Integer.parseInt(tab[2]), Integer.parseInt(tab[3]), Integer.parseInt(tab[4]));
             tabVols.add(new Vol(tab[0], tab[1], date, Integer.parseInt(tab[5])));
         }
         tLire.close();
-
     }
 
-    public static void ListeVols() {
+    public void ListeVols() {
 
-        System.out.println("Vos réservations de vols:");
 
-        System.out.println("Numéro     Déstination          Date de départ   Réservations"); // afficher la destination
-                                                                                             // et le nombre de
-                                                                                             // reservation
+        String message = "Vos réservations de vols: \n" +
+        "Numéro     Déstination          Date de départ   Réservations\n"; // afficher la destination
         for (Vol vol : tabVols) {
-            System.out.println(String.format("%1$-10s %2$-20s %3$-16s %4$s", vol.getNumeroDeVol(), vol.getDestination(),
-                    vol.getDateDepart().toString(), vol.getNbReservation()));
-            System.out.println();
+            message += String.format("%1$-10s %2$-20s %3$-16s %4$s", vol.getNumeroDeVol(), vol.getDestination(),
+                    vol.getDateDepart().toString(), vol.getNbReservation()) + "\n";
         }
+        JTextArea area = new JTextArea(message);
+        area.setFont(new Font("Courier", Font.PLAIN, 12));
+        area.setBounds(10,30,200,200);
+        frame.add(area);
+        frame.add(mainMenu);
+        frame.setBounds(50, 50, 300, 300);
+        frame.setVisible(true);
+        frame.repaint();
     }
 
-    public static void InsererVol() {
-
-        String nouveauNumero;
-        String nouvelleDestination;
-        String choisir;
-        int nouveauJour;
-        int nouvelleAnnee;
-        int nouveauMois;
-        int nouvelleReservation;
-        do {
-            System.out.println("Le Numéro du Vol:");
-            nouveauNumero = new Scanner(System.in).nextLine();
-            boolean volExistant = RechercherVol(nouveauNumero);
-
-            if (!volExistant) {
-                System.out.println("Le Numéro du Vol est accepté:");
-                System.out.println("SAISIE D'UN NOUVEAU VOL:");
-                System.out.println("Veuillez entrer la déstination:");
-                nouvelleDestination = new Scanner(System.in).nextLine();
-                System.out.println("Veuillez entrez la date de depart au format jour/../....:");
-                nouveauJour = Integer.parseInt(new Scanner(System.in).nextLine());
-                System.out.println("Veuillez entrez le mois de depart ../mois/.... ");
-                nouveauMois = Integer.parseInt(new Scanner(System.in).nextLine());
-                System.out.println("Veuillez entrer en fin l'année de depart ../../Annee ");
-                nouvelleAnnee = Integer.parseInt(new Scanner(System.in).nextLine());
-                System.out.println("Veuillez entrer le nombre de reservation pour ce nouveau vol ");
-                nouvelleReservation = Integer.parseInt(new Scanner(System.in).nextLine());
-                tabVols.add(new Vol(nouveauNumero, nouvelleDestination,
-                        new Date(nouveauJour, nouveauMois, nouvelleAnnee), nouvelleReservation));
-                tabModifie = true;
-            } else {
-                System.out.println("Ce numero de vol existe déja");
-
-            }
-            System.out.print("voulez vous continuer (O/N)    ?");
-            choisir = new Scanner(System.in).nextLine().toUpperCase();
-
-        } while (choisir.equals("O"));
+    public  void InsererVol() {
+        if(nbVols == maxVol) {
+            JOptionPane.showMessageDialog(dialog,"Impossible d'inserer de nouveaux vols, liste est pleinne \n");
+            return;
+        }
+        String numVol = JOptionPane.showInputDialog(dialog, "numero du vol:\n");
+        if(RechercherVol(numVol)) {
+            JOptionPane.showMessageDialog(dialog,"Ce numero Existe deja");
+            return;
+        }
+        String dateStr = JOptionPane.showInputDialog(dialog, "Date du vol (jj/mm/aaaa):\n");
+        String date[] = dateStr.split("/");
+        String dest = JOptionPane.showInputDialog(dialog, "Destination:\n");
+        tabVols.add(new Vol(numVol,dest,new Date(Integer.parseInt(date[0]) ,Integer.parseInt(date[1]),Integer.parseInt(date[2])),0));
     }
 
-    public static boolean RechercherVol(String nouveauNumero) {
+    private boolean RechercherVol(String nouveauNumero) {
         boolean volExistant = false;
 
         for (Vol unVol : tabVols) {
@@ -101,25 +115,19 @@ public class Compagnie {
         return volExistant;
     }
 
-    public static void RetirerVol() {
-        String choisir;
-        String numeroASupprimer;
-        boolean volExistant;
-
-        System.out.println("Veuillez entrer le numero de Vol à retirer");
-        numeroASupprimer = new Scanner(System.in).nextLine();
-        for (int i = 0; tabVols.size(); i++) {
+    public  void RetirerVol() {
+        // utiliser la methode "RechercherVol()" ne fera que complexifié la solution
+        String numeroASupprimer = JOptionPane.showInputDialog(dialog, "numero du vol:\n");
+        for (int i = 0; i<tabVols.size(); i++) {
             Vol vol = tabVols.get(i);
             if (vol.getNumeroDeVol() == numeroASupprimer) {
-                tabVols.remove(vol);
-                // remettre i si ca ne compile pas
-
+                int confirmation = JOptionPane.showConfirmDialog(dialog, "Désirez-vous vraiment retirer ce vol ? \n" +
+                String.format("%1$-20s %2$-16s %3$s", vol.getDestination(), vol.getDateDepart().toString(), vol.getNbReservation()));
+                if(confirmation==JOptionPane.YES_OPTION) tabVols.remove(vol);
                 return; // on sort de la fonction ici
             }
-
         }
-
-        System.out.println("ce vol n'existe pas");
+        JOptionPane.showMessageDialog(dialog,"Ce vol n'existe");
         /**
          * volExistant = RechercherVol(numeroASupprimer);
          * 
@@ -136,32 +144,20 @@ public class Compagnie {
          **/
     }
 
-    public static void modificationDeDate() {
-        String nouvelleDate;
-        String numeroAChanger;
+    public  void modificationDeDate() {
+        String numVol = JOptionPane.showInputDialog(dialog, "Veuillez entrer le numero de Vol que vous voulez modifier la date\n");
 
-        System.out.println("Veuillez entrer le numero de Vol que vous voulez modifier la date");
-        numeroAChanger = new Scanner(System.in).nextLine();
-
-        for (int i = 0; tabVols.size(); i++) {
+        for (int i = 0; i < tabVols.size(); i++) {
             Vol vol = tabVols.get(i);
-            if (vol.getNumeroDeVol() == numeroAChanger) {
-                System.out.println("Déstination          Date de départ   Réservations");
-                System.out.println(String.format("%1$-20s %2$-16s %3$s", vol.getDestination(),
-                        vol.getDateDepart().toString(), vol.getNbReservation()));
-
-                System.out.println("MODIFICATION DE LA DATE DE DÉPART.");
-                System.out.println("Entrer la nouvelle date au format JJ/MM/AAAA:");
-                nouvelleDate = new Scanner(System.in).nextLine();
-                String[] donnees = nouvelleDate.split(new String[] { "/" }, StringSplitOptions.RemoveEmptyEntries);
-
-                Date date = new Date(Integer.parseInt(donnees[0]), Integer.parseInt(donnees[1]),
-                        Integer.parseInt(donnees[2]));
-                vol.setDateDepart(date);
-
+            if (vol.getNumeroDeVol() == numVol) {
+                String newDate = JOptionPane.showInputDialog(dialog, 
+                String.format("%1$-20s %2$-16s %3$s", vol.getDestination(), vol.getDateDepart().toString(), vol.getNbReservation()) +
+                "Entrer la nouvelle date au format JJ/MM/AAAA:" );
+                String date[] = newDate.split("/");
+                vol.setDateDepart(new Date(Integer.parseInt(date[0]) ,Integer.parseInt(date[1]),Integer.parseInt(date[2])));
                 return; // on sort de la fonction ici
             }
-
+            JOptionPane.showMessageDialog(dialog,"Ce vol n'existe");
         }
 
         /**
@@ -186,13 +182,13 @@ public class Compagnie {
 
     }
 
-    public static void reservationDeVol() {
+    public  void reservationDeVol() {
         String nouveauVolReserver;
         int nouvellePlace;
 
         System.out.println("veuillez inscrire le numero du vol que vous souhaitez reserver:");
         nouveauVolReserver = new Scanner(System.in).nextLine();
-        for (int i = 0; tabVols.size(); i++) {
+        for (int i = 0; i <  tabVols.size(); i++) {
             Vol vol = tabVols.get(i);
             if (vol.getNumeroDeVol() == nouveauVolReserver) {
                 int nbReservation = vol.getNbReservation();
@@ -201,7 +197,7 @@ public class Compagnie {
                     return;
                 }
 
-                system.out.println("Il n'y a pas de place disponible dans ce vol");
+                System.out.println("Il n'y a pas de place disponible dans ce vol");
                 return;
 
             }
@@ -234,16 +230,17 @@ public class Compagnie {
 
     }
 
-    public static void ecritureFichier() {
-        if (tabModifie && tabVols.Any()) {
+    public  void ecritureFichier() {
+        /*if (tabModifie && tabVols.Any()) {
             ArrayList<String> lignes = new ArrayList<String>();
             for (Vol vol : tabVols) {
                 lignes.add(String.format("%1$-2s %2$-20s %3$-2s %4$-2s %5$-2s %6$s", vol.getNumeroDeVol(),
                         vol.getDestination(), vol.getDateDepart().getJour(), vol.getDateDepart().getMois(),
                         vol.getDateDepart().getAnnee(), vol.getNbReservation()));
             }
-            File.WriteAllLines("../../../Cie_Air_Relax.txt", lignes, Encoding.UTF8);
+            //File.WriteAllLines("../../../Cie_Air_Relax.txt", lignes, Encoding.UTF8);
         }
+        */
     }
 
 }

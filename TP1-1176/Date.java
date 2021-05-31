@@ -6,16 +6,16 @@ public class Date
     //constructeurs sans parametres
     public Date()
     {
-        Annee = 0;
-        Mois = 0;
-        Jour = 0;
+        annee = 0;
+        mois = 0;
+        jour = 0;
     }
      // constructeurs avec 3 parametres
     public Date (int jour, int mois, int annee)
     {
-        Annee = annee;
-        Mois = mois;
-        Jour = jour;
+        this.annee = annee;
+        this.mois = mois;
+        this.jour = jour;
     }
     
      // get
