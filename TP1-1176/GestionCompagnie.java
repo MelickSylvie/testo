@@ -22,7 +22,7 @@ public class GestionCompagnie extends JFrame {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        do {
         choisir = Integer.parseInt(flyWithMe.ouvrir());
         switch (choisir) {
             case 1:
@@ -43,7 +43,12 @@ public class GestionCompagnie extends JFrame {
             case 0:
                 flyWithMe.ecritureFichier();
                 break;
+            default:
+                JOptionPane.showMessageDialog(new JFrame() ,"Mauvaise entrée, réessayer SVP.");
+                break;
         }
+    }
+    while (choisir != 0);
 
     }
 }
